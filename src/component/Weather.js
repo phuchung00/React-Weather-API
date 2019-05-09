@@ -3,43 +3,68 @@ import React, { Component } from 'react'
 export default class Weather extends Component {
   constructor(props) {
     super(props)
+    const { isLoading } = this.props
     this.state = {
-      isLoading: false,
+      // isLoading: false,
       item: []
     }
   }
-  componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
+  dmloading =()=>{
+    const { change }= this.props
+    
+    change()
+  }
+  Weather = () => {
+    console.log(this.props.isLoading)
+    fetch("http://api.openweathermap.org/data/2.5/forecast?id=1566083&appid=87b3790f19cab150c1b1b74107d95e0a")
       .then(res => res.json())
       .then(
         (json) => {
+          console.log(json)
+          
           this.setState({
-            isLoading: true,
+            // isLoading: true,
             item: json
-          })
+          }, ()=> this.dmloading())
         },
         (error) => {
+          this.dmloading ()
           this.setState({
-            isLoading: true,
+            // isLoading: true,
             error
           })
         }
-      )
+      ).catch(e => { console.log(e) })
   }
+  callInterval = () => {
+    setInterval(() => {
+      console.log("Đã hết 10s")
+      this.Weather()
+    }, 10000);
+  }
+
+  componentDidMount() {
+    this.callInterval()
+    this.Weather()
+  }
+
   render() {
-    const {  isLoading, item } = this.state
-      if (!isLoading) {
+    const { item } = this.state
+    const { isLoading }= this.props
+    if (isLoading) {
       return <div>loading...</div>
     } else {
       return (
         <div>
-          <ul>
-            {item.map(item => (
-              <li key ={item.id}>
-                Name: {item.name} | Email: {item.email}
-              </li>
-            ))}
-          </ul>
+          <div>
+            {item.city.name}
+          </div>
+          <div>
+            {item.list[0].clouds.all}
+          </div>
+          <div>
+            {item.list[0].wind.speed}
+          </div>
         </div>
       )
     }
